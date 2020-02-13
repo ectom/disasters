@@ -1,23 +1,26 @@
 import React, { Component } from 'react';
 import { Paper, Typography } from '@material-ui/core';
-const { auth, items, filter } = require('@planet/client/api');
+
+const { auth, items, filter } = require( '@planet/client/api' );
 
 export default class Test extends Component {
-  constructor(props) {
-    super(props);
+  constructor( props ) {
+    super( props );
     this.state = {
-      items: undefined
+      item_id: undefined,
+      item_url: undefined
     };
     this.item = undefined;
     this.search4Band();
+    this.key = process.env.REACT_APP_API_KEY
   }
   
-  useKey(){
+  useKey() {
     const key = process.env.REACT_APP_API_KEY
-    auth.setKey(key);
+    auth.setKey( key );
   }
   
-  search4Band(){
+  search4Band() {
     const geo = {
       "type": "Polygon",
       "coordinates": [
@@ -47,21 +50,25 @@ export default class Test extends Component {
     }
     const options = {
       types: ['PSScene4Band'],
-      filter: filter.geometry('geometry', geo ),
+      filter: filter.geometry( 'geometry', geo ),
       limit: 10
     }
     this.useKey()
-    items.search( options ).then( response  => {
-      console.log(response)
-      this.setState({ items: response[0].id })
-      this.item = response[0]
+    items.search( options ).then( response => {
+      console.log( response )
+      const tileThumb = `${response[0]._links.thumbnail}?api_key=${this.key}`;
+      this.setState( {
+        item_id: response[0].id,
+        item_url: tileThumb
+      } );
     } );
   }
   
   render() {
-    return(
+    return (
       <Paper>
-        <Typography>{this.state.items}</Typography>
+        <Typography>{this.state.item_id}</Typography>
+        <img src={this.state.item_url} alt=""/>
       </Paper>
     )
   }
