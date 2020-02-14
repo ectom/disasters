@@ -8,11 +8,12 @@ export default class Test extends Component {
     super( props );
     this.state = {
       item_id: undefined,
-      item_url: undefined
+      item_url: undefined,
+      fema: undefined
     };
-    this.item = undefined;
-    this.search4Band();
     this.key = process.env.REACT_APP_API_KEY
+    this.search4Band();
+    this.getUSGS();
   }
   
   useKey() {
@@ -64,11 +65,26 @@ export default class Test extends Component {
     } );
   }
   
+  getUSGS(){
+    fetch(`https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=5&limit=10`, {
+      method: 'GET',
+      mode: 'cors',
+      cache: 'no-cache',
+      credentials: 'same-origin',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      redirect: 'follow',
+      referrerPolicy: 'no-referrer',
+    }).then( res => console.log(res))
+  }
+  
   render() {
     return (
       <Paper>
         <Typography>{this.state.item_id}</Typography>
         <img src={this.state.item_url} alt=""/>
+        {/*<Typography>{this.state.fema}</Typography>*/}
       </Paper>
     )
   }
