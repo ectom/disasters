@@ -97,20 +97,20 @@ export default class Earthquakes extends Component {
         month = '12';
         break;
     }
-    const date = time[2];
+    const date = parseInt(time[2]);
     const year = time[3];
     return [`${year}-${month}-${date - 2}T00:00:00.000Z`, `${year}-${month}-${date + 2}T23:59:59.999Z`];
     // TODO move this url somewhere else. url does not work without item types and ids (supposed to bring user to explorer
-    // console.log(`https://www.planet.com/explorer/#/center/${this.state.earthquake.point[0]},${this.state.earthquake.point[0]}/dates/${year}-${month}-${date - 2}T00:00:00.000Z..${year}-${month}-${date + 2}T23:59:59.999Z/geometry/POLYGON((${this.state.earthquake.bbox[0][0]}+${this.state.earthquake.bbox[0][1]},${this.state.earthquake.bbox[1][0]}+${this.state.earthquake.bbox[1][1]},${this.state.earthquake.bbox[2][0]}+${this.state.earthquake.bbox[2][1]},${this.state.earthquake.bbox[3][0]}+${this.state.earthquake.bbox[3][1]},${this.state.earthquake.bbox[0][0]}+${this.state.earthquake.bbox[0][1]}))` )
+     console.log(`https://www.planet.com/explorer/#/center/${this.state.earthquake.point[0]},${this.state.earthquake.point[0]}/dates/${year}-${month}-${date - 2}T00:00:00.000Z..${year}-${month}-${date + 2}T23:59:59.999Z/geometry/POLYGON((${this.state.earthquake.bbox[0][0]}+${this.state.earthquake.bbox[0][1]},${this.state.earthquake.bbox[1][0]}+${this.state.earthquake.bbox[1][1]},${this.state.earthquake.bbox[2][0]}+${this.state.earthquake.bbox[2][1]},${this.state.earthquake.bbox[3][0]}+${this.state.earthquake.bbox[3][1]},${this.state.earthquake.bbox[0][0]}+${this.state.earthquake.bbox[0][1]}))` )
   }
 
   pointToBBOX( lon, lat ) {
-    return [
+    return [[
       [lon - 0.2, lat + 0.2],
       [lon + 0.2, lat + 0.2],
       [lon - 0.2, lat - 0.2],
       [lon + 0.2, lat - 0.2]
-    ];
+    ]];
   }
   
   getUSGS() {
@@ -144,7 +144,7 @@ export default class Earthquakes extends Component {
       }
       this.setState( { earthquakes: earthquakes }, () => {
         console.log( this.state );
-        // this.getExplorerSites(); TODO make this work (supposed to get image)
+         this.getExplorerSites();
       } );
     } )
   }
@@ -159,26 +159,9 @@ export default class Earthquakes extends Component {
     const { search_filter, item_types } = searchBody( geoConfig, dateRange );
     console.log( search_filter, item_types );
     this.useKey();
-    items.search( { 'filter': search_filter, 'types': item_types, 'limit': 5 } ).then( response => {
-      console.log( response );
+    items.search( { filter: search_filter, types: item_types} ).then( response => {
+      console.log( 'hey', response );
     } );
-    // fetch( `https://api.planet.com/data/v1/quick-search?_sort=acquired%20desc&_page_size=5`, {
-    //   method: 'POST',
-    //   mode: 'cors',
-    //   cache: 'no-cache',
-    //   // credentials: 'same-origin',
-    //   headers: {
-    //     'Access-Control-Allow-Headers': 'Accept',
-    //     'Access-Control-Allow-Credentials': true,
-    //     'Access-Control-Allow-Origin': 'http://localhost:3000',
-    //     'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, PATCH, OPTIONS',
-    //     'x-api-key': this.getKey(),
-    //     'Content-Type': 'application/json'
-    //   },
-    //   redirect: 'follow',
-    //   referrerPolicy: 'no-referrer',
-    //   body: {'filter': search_filter, 'types': item_types}
-    // } )
   }
   
   Earthquake = ( quake ) => {
@@ -186,7 +169,7 @@ export default class Earthquakes extends Component {
     return (
       <Paper style={{ 'margin': '5%' }}>
         <Typography variant={'h5'}>{quake.title}</Typography>
-        <Typography variant={'body1'}><strong>Magnitdue:</strong> {quake.magnitude}</Typography>
+        <Typography variant={'body1'}><strong>Magnitude:</strong> {quake.magnitude}</Typography>
         <Typography variant={'body1'}><strong>Place:</strong> {quake.place}</Typography>
         <Typography variant={'body1'}><strong>Time of earthquake:</strong> {quake.time}</Typography>
         <Typography variant={'body1'}><strong>Coordinates of earthquake:</strong> {quake.point[0]}°W, {quake.point[1]}°N</Typography>
