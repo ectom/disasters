@@ -10,7 +10,7 @@ export default class Earthquake extends Component {
     this.state = {
       item_id: undefined,
       item_url: undefined,
-      earthquake: {}
+      earthquakes: []
     };
     this.key = process.env.REACT_APP_API_KEY;
     this.search4Band();
@@ -84,7 +84,7 @@ export default class Earthquake extends Component {
       case 'Aug':
         month = '08';
         break;
-      case 'Sept':
+      case 'Sept' || 'Sep':
         month = '09';
         break;
       case 'Oct':
@@ -100,22 +100,12 @@ export default class Earthquake extends Component {
     const date = time[2];
     const year = time[3];
     const dateRange = [`${year}-${month}-${date - 2}T00:00:00.000Z`, `${year}-${month}-${date + 2}T23:59:59.999Z`];
-    console.log( dateRange )
-    // url does not work
-    console.log( `https://www.planet.com/explorer/#/center/${this.state.earthquake.point[0]},${this.state.earthquake.point[0]}/dates/${year}-${month}-${date - 2}T00:00:00.000Z..${year}-${month}-${date + 2}T23:59:59.999Z/geometry/POLYGON((${this.state.earthquake.bbox.topLeft[0]}+${this.state.earthquake.bbox.topLeft[1]},${this.state.earthquake.bbox.bottomLeft[0]}+${this.state.earthquake.bbox.bottomLeft[1]},${this.state.earthquake.bbox.bottomRight[0]}+${this.state.earthquake.bbox.bottomRight[0]},${this.state.earthquake.bbox.topRight[0]}+${this.state.earthquake.bbox.topRight[1]},${this.state.earthquake.bbox.topLeft[0]}+${this.state.earthquake.bbox.topLeft[1]}))` )
+    // url does not work without item types and ids
+    // console.log(`https://www.planet.com/explorer/#/center/${this.state.earthquake.point[0]},${this.state.earthquake.point[0]}/dates/${year}-${month}-${date - 2}T00:00:00.000Z..${year}-${month}-${date + 2}T23:59:59.999Z/geometry/POLYGON((${this.state.earthquake.bbox[0][0]}+${this.state.earthquake.bbox[0][1]},${this.state.earthquake.bbox[1][0]}+${this.state.earthquake.bbox[1][1]},${this.state.earthquake.bbox[2][0]}+${this.state.earthquake.bbox[2][1]},${this.state.earthquake.bbox[3][0]}+${this.state.earthquake.bbox[3][1]},${this.state.earthquake.bbox[0][0]}+${this.state.earthquake.bbox[0][1]}))` )
     return dateRange
   }
-  
+
   pointToBBOX( lon, lat ) {
-    return {
-      topLeft: [lon - 0.2, lat + 0.2],
-      topRight: [lon + 0.2, lat + 0.2],
-      bottomLeft: [lon - 0.2, lat - 0.2],
-      bottomRight: [lon + 0.2, lat - 0.2]
-    };
-  }
-  
-  coordsForBody( lon, lat ) {
     return [
       [lon - 0.2, lat + 0.2],
       [lon + 0.2, lat + 0.2],
@@ -138,17 +128,24 @@ export default class Earthquake extends Component {
     }).then((res) => {
       return res.json();
     }).then(res => {
-      let earthquake = {
-        time: Date(res.features[0].properties.time),
-        magnitude: res.features[0].properties.mag,
-        place: res.features[0].properties.place,
-        point: [res.features[0].geometry.coordinates[0], res.features[0].geometry.coordinates[1]],
-        bbox: this.pointToBBOX( res.features[0].geometry.coordinates[0], res.features[0].geometry.coordinates[1] ),
-        type: res.features[0].properties.earthquake
-      };
-      this.state.point = [res.features[0].geometry.coordinates[0], res.features[0].geometry.coordinates[1]]
-      this.setState( { earthquake: earthquake }, () => {
-        this.getExplorerSites()
+      console.log( res )
+      const quakes = res.features;
+      let earthquakes = [];
+      for ( let i = 0; i < quakes.length; i++ ) {
+        let earthquake = {
+          time: Date( quakes[i].properties.time ),
+          magnitude: quakes[i].properties.mag,
+          title: quakes[i].properties.title,
+          place: quakes[i].properties.place,
+          point: [quakes[i].geometry.coordinates[0], quakes[i].geometry.coordinates[1]],
+          bbox: this.pointToBBOX( quakes[i].geometry.coordinates[0], quakes[i].geometry.coordinates[1] ),
+          type: quakes[i].properties.earthquake
+        };
+        earthquakes.push( earthquake );
+      }
+      this.setState( { earthquakes: earthquakes }, () => {
+        console.log( this.state )
+        // this.getExplorerSites();
       } );
     } )
   }
@@ -157,28 +154,30 @@ export default class Earthquake extends Component {
     // constructing search body
     const geoConfig = {
       "type": "Polygon",
-      "coordinates": this.coordsForBody( this.state.point[0], this.state.point[1] )
+      "coordinates": this.pointToBBOX( this.state.point[0], this.state.point[1] )
     };
     const dateRange = this.getDate();
-    console.log( geoConfig )
-    const body = searchBody( geoConfig, dateRange )
-    console.log( body )
+    const { search_filter, item_types } = searchBody( geoConfig, dateRange );
+    console.log( search_filter, item_types )
     this.useKey();
-    // items.search(body);
-    fetch( `https://api.planet.com/data/v1/quick-search?_sort=acquired%20desc&_page_size=5`, {
-      method: 'POST',
-      mode: 'cors',
-      cache: 'no-cache',
-      // credentials: 'same-origin',
-      headers: {
-        'Access-Control-Allow-Headers': 'Accept',
-        'x-api-key': this.getKey(),
-        'Content-Type': 'application/json'
-      },
-      redirect: 'follow',
-      referrerPolicy: 'no-referrer',
-      body: body
-    } )
+    items.search( { 'filter': search_filter, 'types': item_types, 'limit': 5 } );
+    // fetch( `https://api.planet.com/data/v1/quick-search?_sort=acquired%20desc&_page_size=5`, {
+    //   method: 'POST',
+    //   mode: 'cors',
+    //   cache: 'no-cache',
+    //   // credentials: 'same-origin',
+    //   headers: {
+    //     'Access-Control-Allow-Headers': 'Accept',
+    //     'Access-Control-Allow-Credentials': true,
+    //     'Access-Control-Allow-Origin': 'http://localhost:3000',
+    //     'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, PATCH, OPTIONS',
+    //     'x-api-key': this.getKey(),
+    //     'Content-Type': 'application/json'
+    //   },
+    //   redirect: 'follow',
+    //   referrerPolicy: 'no-referrer',
+    //   body: {'filter': search_filter, 'types': item_types}
+    // } )
   }
   
   render() {
