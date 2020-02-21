@@ -1,12 +1,12 @@
 import React from 'react';
 import './App.css';
-import Earthquake from './components/Earthquake';
+import Earthquakes from './components/Earthquakes';
 
 function App() {
   return (
     <div className="App">
       <h1>Earthquakes</h1>
-      <Earthquake/>
+      <Earthquakes/>
     </div>
   );
 }
