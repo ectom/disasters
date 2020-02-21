@@ -182,13 +182,14 @@ export default class Earthquakes extends Component {
   }
   
   Earthquake = ( quake ) => {
-    console.log( quake );
+    // console.log( quake );
     return (
       <Paper style={{ 'margin': '5%' }}>
         <Typography variant={'h5'}>{quake.title}</Typography>
-        <Typography variant={'p'}>Magnitdue: {quake.magnitude}</Typography>
-        <Typography variant={'p'}>Place: {quake.place}</Typography>
-        <Typography variant={'p'}>Coordinates of earthquake: {quake.point[0]}°W, {quake.point[1]}°N</Typography>
+        <Typography variant={'body1'}><strong>Magnitdue:</strong> {quake.magnitude}</Typography>
+        <Typography variant={'body1'}><strong>Place:</strong> {quake.place}</Typography>
+        <Typography variant={'body1'}><strong>Time of earthquake:</strong> {quake.time}</Typography>
+        <Typography variant={'body1'}><strong>Coordinates of earthquake:</strong> {quake.point[0]}°W, {quake.point[1]}°N</Typography>
       </Paper>
     )
   };
