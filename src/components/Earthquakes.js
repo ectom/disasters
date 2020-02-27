@@ -109,7 +109,8 @@ export default class Earthquakes extends Component {
       [lon - 0.2, lat + 0.2],
       [lon + 0.2, lat + 0.2],
       [lon - 0.2, lat - 0.2],
-      [lon + 0.2, lat - 0.2]
+      [lon + 0.2, lat - 0.2],
+      [lon - 0.2, lat + 0.2]
     ]];
   }
   
