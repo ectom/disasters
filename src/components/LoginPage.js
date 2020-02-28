@@ -12,7 +12,9 @@ export default class LoginPage extends Component {
     this.state = {
       email: '',
       password: '',
-      errors: ''
+      errors: '',
+      validEmail: false,
+      validPassword: false
     }
   }
 
@@ -35,14 +37,15 @@ export default class LoginPage extends Component {
   login(){
     auth.login( this.state.email, this.state.password ).then(token => {
       const user = decode(token)
+      console.log(user)
 //      if user:
     }).catch(err => {
       console.log(err)
-      if(err.body.errors.email[0]){
-        this.setState({errors: err.body.errors.email[0]}, () => {
+      if(err.status === 400){
+        this.setState({errors: err.errors.email[0]}, () => {
           console.log(this.state.errors)
         });
-      } else if(err.body.message){
+      } else if(err.status === 401){
         this.setState({errors: err.body.message}, () => {
           console.log(this.state.errors)
         });
@@ -51,20 +54,33 @@ export default class LoginPage extends Component {
   };
   
   onChangeEmail(e) {
-    this.setState({email: e.target.value})
+    this.setState({email: e.target.value}, () => {
+      const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      if (re.test(this.state.email.toLowerCase())){
+        this.setState({validEmail: true})
+      } else {
+        this.setState({validEmail: false})
+      }
+    })
   }
   
   onChangePass(e) {
-    this.setState({password: e.target.value})
+    this.setState({password: e.target.value}, () => {
+      if(this.state.password.length > 0){
+        this.setState({validPassword: true})
+      } else {
+        this.setState({validPassword: false})
+      }
+    })
   }
   
   render(){
     return(
       <Paper>
         <FormControl>
-          <TextField name={'email'} placeholder={'Email'} variant={'outlined'} onChange={(e) => this.onChangeEmail(e)} value={this.state.email}/>
-          <TextField name={'password'} placeholder={'Password'} type="password" variant={'outlined'} onChange={(e) => this.onChangePass(e)} value={this.state.password}/>
-          <Button onClick={() => {this.login()}}>Login</Button>
+          <TextField required={true} name={'email'} placeholder={'Email'} variant={'outlined'} onChange={(e) => this.onChangeEmail(e)} value={this.state.email}/>
+          <TextField required={true} name={'password'} placeholder={'Password'} type="password" variant={'outlined'} onChange={(e) => this.onChangePass(e)} value={this.state.password}/>
+          <Button disabled={!this.state.validEmail && !this.state.validPassword} onClick={() => {this.login()}}>Login</Button>
         </FormControl>
       </Paper>
     )
