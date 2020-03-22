@@ -3,7 +3,7 @@ import { Provider } from 'react-redux';
 import { Counter } from './components/Counter/Counter';
 import './App.css';
 import Earthquakes from './components/Earthquakes';
-import LoginPage from './components/LoginPage';
+import { LoginPage } from './components/Login/LoginPage';
 import { store }from './store';
 
 function App() {

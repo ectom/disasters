@@ -1,16 +1,11 @@
-user = {
-  id: null,
-  email: null,
-  apiKey: null,
-  token: null
-};
+const initialState = {};
 
-const loginReducer = function (state = user, action) {
+export const loginReducer = function (state = initialState, action) {
   switch (action.type) {
-    case "INCREMENT":
-      return state + 1;
-    case "DECREMENT":
-      return state - 1;
+    case 'LOGIN':
+      return state = action.user;
+    case 'LOGOUT':
+      return state = initialState;
     default:
       return state;
   }
