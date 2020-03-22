@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import { Container } from './Container';
+import { CounterContainer } from './CounterContainer';
 
 const mapStateToProps = state => {
   return {
@@ -14,4 +14,4 @@ const mapDispatchToProps = dispatch => {
   }
 };
 
-export const Counter = connect( mapStateToProps, mapDispatchToProps )( Container );
+export const Counter = connect( mapStateToProps, mapDispatchToProps )( CounterContainer );

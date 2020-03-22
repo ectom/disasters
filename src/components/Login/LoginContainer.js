@@ -1,11 +1,11 @@
-import React, {useState} from 'react';
+import React from 'react';
 import { Paper, TextField, Button, FormControl } from '@material-ui/core';
 import decode from 'jwt-decode';
 import useStateWithCallback from 'use-state-with-callback';
 const auth = require('@planet/client/api/auth');
 const errors = require('@planet/client/api/errors');
 
-export const Container = ({state, handleLogin, handleLogout}) => {
+export const LoginContainer = ( {state, handleLogin, handleLogout} ) => {
   const [email, setEmail] = useStateWithCallback('');
   const [password, setPassword] = useStateWithCallback('');
   const [errors, setErrors] = useStateWithCallback('', errors => {console.log(errors)});
@@ -79,5 +79,4 @@ export const Container = ({state, handleLogin, handleLogout}) => {
       </FormControl>
     </Paper>
   )
-  
-}
+};

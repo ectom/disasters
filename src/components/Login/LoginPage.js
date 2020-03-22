@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import { Container } from './Container';
+import { LoginContainer } from './LoginContainer';
 
 const mapStateToProps = state => {
   return {
@@ -7,11 +7,11 @@ const mapStateToProps = state => {
   };
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch) => {
   return {
-    handleLogin: (user) => dispatch( { type: 'LOGIN', user: user } ),
-    handleLogout: () => dispatch( { type: 'LOGOUT' } )
+    handleLogin: (user) => {return dispatch({ type: 'LOGIN', payload: user })},
+    handleLogout:() => {return dispatch( { type: 'LOGOUT' } )}
   }
 };
 
-export const LoginPage = connect( mapStateToProps, mapDispatchToProps )( Container );
+export const LoginPage = connect( mapStateToProps, mapDispatchToProps )( LoginContainer );
