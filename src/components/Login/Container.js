@@ -8,7 +8,7 @@ const errors = require('@planet/client/api/errors');
 export const Container = ({state, handleLogin, handleLogout}) => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [errors, setErrors] = useState('', errors => {console.log(errors)})
+  const [errors, setErrors] = useStateWithCallback('', errors => {console.log(errors)});
   const [validEmail, setValidEmail] = useState(false)
   const [validPassword, setValidPassword] = useState(false)
   const [user, setUser] = useState(state)
