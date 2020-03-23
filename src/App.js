@@ -1,13 +1,17 @@
 import React from 'react';
+import { Provider } from 'react-redux';
 import './App.css';
-import Earthquakes from './components/Earthquakes';
+import { LoginPage } from './components/Login/LoginPage';
+import { store } from './store';
 
 function App() {
+  
   return (
-    <div className="App">
-      <h1>Earthquakes</h1>
-      <Earthquakes/>
-    </div>
+    <>
+      <Provider store={store}>
+        <LoginPage/>
+      </Provider>
+    </>
   );
 }
 

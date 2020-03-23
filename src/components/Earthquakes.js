@@ -44,7 +44,7 @@ export default class Earthquakes extends Component {
       filter: filter.geometry( 'geometry', geo ),
       limit: 10
     };
-    this.useKey();
+    // this.useKey();
     items.search( options ).then( response => {
       console.log( response );
       const tileThumb = `${response[0]._links.thumbnail}?api_key=${this.key}`;
@@ -101,7 +101,7 @@ export default class Earthquakes extends Component {
     const year = time[3];
     return [`${year}-${month}-${date - 2}T00:00:00.000Z`, `${year}-${month}-${date + 2}T23:59:59.999Z`];
     // TODO move this url somewhere else. url does not work without item types and ids (supposed to bring user to explorer
-     console.log(`https://www.planet.com/explorer/#/center/${this.state.earthquake.point[0]},${this.state.earthquake.point[0]}/dates/${year}-${month}-${date - 2}T00:00:00.000Z..${year}-${month}-${date + 2}T23:59:59.999Z/geometry/POLYGON((${this.state.earthquake.bbox[0][0]}+${this.state.earthquake.bbox[0][1]},${this.state.earthquake.bbox[1][0]}+${this.state.earthquake.bbox[1][1]},${this.state.earthquake.bbox[2][0]}+${this.state.earthquake.bbox[2][1]},${this.state.earthquake.bbox[3][0]}+${this.state.earthquake.bbox[3][1]},${this.state.earthquake.bbox[0][0]}+${this.state.earthquake.bbox[0][1]}))` )
+    //  console.log(`https://www.planet.com/explorer/#/center/${this.state.earthquake.point[0]},${this.state.earthquake.point[0]}/dates/${year}-${month}-${date - 2}T00:00:00.000Z..${year}-${month}-${date + 2}T23:59:59.999Z/geometry/POLYGON((${this.state.earthquake.bbox[0][0]}+${this.state.earthquake.bbox[0][1]},${this.state.earthquake.bbox[1][0]}+${this.state.earthquake.bbox[1][1]},${this.state.earthquake.bbox[2][0]}+${this.state.earthquake.bbox[2][1]},${this.state.earthquake.bbox[3][0]}+${this.state.earthquake.bbox[3][1]},${this.state.earthquake.bbox[0][0]}+${this.state.earthquake.bbox[0][1]}))` )
   }
 
   pointToBBOX( lon, lat ) {
@@ -109,7 +109,8 @@ export default class Earthquakes extends Component {
       [lon - 0.2, lat + 0.2],
       [lon + 0.2, lat + 0.2],
       [lon - 0.2, lat - 0.2],
-      [lon + 0.2, lat - 0.2]
+      [lon + 0.2, lat - 0.2],
+      [lon - 0.2, lat + 0.2]
     ]];
   }
   
@@ -132,6 +133,7 @@ export default class Earthquakes extends Component {
       let earthquakes = [];
       for ( let i = 0; i < quakes.length; i++ ) {
         let earthquake = {          // TODO store image(s) and link to explorer
+          id: i,
           time: Date( quakes[i].properties.time ),
           magnitude: quakes[i].properties.mag,
           title: quakes[i].properties.title,
@@ -158,7 +160,7 @@ export default class Earthquakes extends Component {
     const dateRange = this.getDate();
     const { search_filter, item_types } = searchBody( geoConfig, dateRange );
     console.log( search_filter, item_types );
-    this.useKey();
+    // this.useKey();
     items.search( { filter: search_filter, types: item_types} ).then( response => {
       console.log( 'hey', response );
     } );
@@ -167,6 +169,7 @@ export default class Earthquakes extends Component {
   Earthquake = ( quake ) => {
     // console.log( quake );
     return (
+      <React.Fragment key={quake.id}>
       <Paper style={{ 'margin': '5%' }}>
         <Typography variant={'h5'}>{quake.title}</Typography>
         <Typography variant={'body1'}><strong>Magnitude:</strong> {quake.magnitude}</Typography>
@@ -174,6 +177,7 @@ export default class Earthquakes extends Component {
         <Typography variant={'body1'}><strong>Time of earthquake:</strong> {quake.time}</Typography>
         <Typography variant={'body1'}><strong>Coordinates of earthquake:</strong> {quake.point[0]}°W, {quake.point[1]}°N</Typography>
       </Paper>
+      </React.Fragment>
     )
   };
   
