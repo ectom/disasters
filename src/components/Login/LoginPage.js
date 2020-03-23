@@ -7,11 +7,18 @@ const mapStateToProps = state => {
   };
 };
 
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = dispatch => {
   return {
-    handleLogin: (user) => {return dispatch({ type: 'LOGIN', payload: user })},
-    handleLogout:() => {return dispatch( { type: 'LOGOUT' } )}
+    handleLogin: ( user ) => dispatch( { type: 'LOGIN', payload: user } ),
+    handleLogout: () => dispatch( { type: 'LOGOUT' } )
   }
 };
+
+// const mapDispatchToProps = dispatch => {
+//   return {
+//     handleIncrementClick: () => dispatch( { type: 'INCREMENT', payload: 'user guy' } ),
+//     handleDecrementClick: () => dispatch( { type: 'DECREMENT', payload: 'no user' } )
+//   }
+// };
 
 export const LoginPage = connect( mapStateToProps, mapDispatchToProps )( LoginContainer );
