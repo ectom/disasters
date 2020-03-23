@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Paper, TextField, Button, FormControl } from '@material-ui/core';
 import decode from 'jwt-decode';
-import useStateWithCallback from 'use-state-with-callback';
+import Earthquakes from '../Earthquakes';
 
 const auth = require( '@planet/client/api/auth' );
 const errors = require( '@planet/client/api/errors' );
@@ -82,22 +82,30 @@ export const LoginContainer = ( {user, handleLogin, handleLogout} ) => {
     setPassword(e.target.value)
   };
   
-  const Data = () => {
-    console.log('state', user)
-    // if () {
-    //   return (<h1>{user.user_id} {user.api_key} {user.user_name} {user.email}</h1>)
-    // }
-    return <h1>Not logged in</h1>
-  }
+  const Login = () => {
+    if (user.login.isLoggedIn) {
+      return (
+        <>
+        <h4>Welcome {user.login.user_name}!</h4>
+        <Button onClick={() => logout()}>Logout</Button>
+        <h1>Earthquakes</h1>
+        <Earthquakes/>
+        </>
+      )
+    }
+    return (
+      <>
+      <h2>Log In</h2>
+      <Paper>
+        <FormControl>
+          <TextField required={true} name={'email'} placeholder={'Email'} variant={'outlined'} onChange={(e) => onChangeEmail(e)} value={email}/>
+          <TextField required={true} name={'password'} placeholder={'Password'} type="password" variant={'outlined'} onChange={(e) => onChangePass(e)} value={password}/>
+          <Button disabled={!validEmail && !validPassword} onClick={() => login()}>Login</Button>
+        </FormControl>
+      </Paper>
+      </>
+    )
+  };
 
-  return(
-    <Paper>
-      <Data />
-      <FormControl>
-        <TextField required={true} name={'email'} placeholder={'Email'} variant={'outlined'} onChange={(e) => onChangeEmail(e)} value={email}/>
-        <TextField required={true} name={'password'} placeholder={'Password'} type="password" variant={'outlined'} onChange={(e) => onChangePass(e)} value={password}/>
-        <Button disabled={!validEmail && !validPassword} onClick={() => login()}>Login</Button>
-      </FormControl>
-    </Paper>
-  )
+  return(<Login/>)
 };

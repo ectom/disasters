@@ -14,11 +14,4 @@ const mapDispatchToProps = dispatch => {
   }
 };
 
-// const mapDispatchToProps = dispatch => {
-//   return {
-//     handleIncrementClick: () => dispatch( { type: 'INCREMENT', payload: 'user guy' } ),
-//     handleDecrementClick: () => dispatch( { type: 'DECREMENT', payload: 'no user' } )
-//   }
-// };
-
 export const LoginPage = connect( mapStateToProps, mapDispatchToProps )( LoginContainer );

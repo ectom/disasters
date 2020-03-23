@@ -9,12 +9,11 @@ const initialState = {
 export const loginReducer = function (state = initialState, action) {
   switch (action.type) {
     case 'LOGIN':
-      const user = action.payload;
-      state = user;
+      state = action.payload;
       console.log(state)
       return state;
     case 'LOGOUT':
-      return state = {...state, initialState};
+      return state = initialState;
     default:
       return state;
   }
