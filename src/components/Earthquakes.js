@@ -133,6 +133,7 @@ export default class Earthquakes extends Component {
       let earthquakes = [];
       for ( let i = 0; i < quakes.length; i++ ) {
         let earthquake = {          // TODO store image(s) and link to explorer
+          id: i,
           time: Date( quakes[i].properties.time ),
           magnitude: quakes[i].properties.mag,
           title: quakes[i].properties.title,
@@ -168,6 +169,7 @@ export default class Earthquakes extends Component {
   Earthquake = ( quake ) => {
     // console.log( quake );
     return (
+      <React.Fragment key={quake.id}>
       <Paper style={{ 'margin': '5%' }}>
         <Typography variant={'h5'}>{quake.title}</Typography>
         <Typography variant={'body1'}><strong>Magnitude:</strong> {quake.magnitude}</Typography>
@@ -175,6 +177,7 @@ export default class Earthquakes extends Component {
         <Typography variant={'body1'}><strong>Time of earthquake:</strong> {quake.time}</Typography>
         <Typography variant={'body1'}><strong>Coordinates of earthquake:</strong> {quake.point[0]}°W, {quake.point[1]}°N</Typography>
       </Paper>
+      </React.Fragment>
     )
   };
   

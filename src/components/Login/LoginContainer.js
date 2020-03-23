@@ -4,13 +4,14 @@ import decode from 'jwt-decode';
 import Earthquakes from '../Earthquakes';
 
 const auth = require( '@planet/client/api/auth' );
-const errors = require( '@planet/client/api/errors' );
+// const errors = require( '@planet/client/api/errors' );
 
 
 export const LoginContainer = ( {user, handleLogin, handleLogout} ) => {
   
   let [email, setEmail] = useState('');
   useEffect(() => {
+    // eslint-disable-next-line no-useless-escape
     const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     if ( re.test( email.toLowerCase() ) ) {
       setValidEmail( true )
@@ -38,7 +39,6 @@ export const LoginContainer = ( {user, handleLogin, handleLogout} ) => {
   
   let [theUser, setTheUser] = useState( user );
   useEffect(() => {
-    console.log( theUser );
     handleLogin( theUser )
   }, [theUser]);
   
