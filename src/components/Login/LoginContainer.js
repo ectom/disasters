@@ -7,7 +7,7 @@ const auth = require( '@planet/client/api/auth' );
 const errors = require( '@planet/client/api/errors' );
 
 
-export const LoginContainer = ( {state, handleLogin, handleLogout} ) => {
+export const LoginContainer = ( {user, handleLogin, handleLogout} ) => {
   
   let [email, setEmail] = useState('');
   useEffect(() => {
@@ -36,18 +36,28 @@ export const LoginContainer = ( {state, handleLogin, handleLogout} ) => {
   let [validEmail, setValidEmail] = useState( false );
   let [validPassword, setValidPassword] = useState( false );
   
-  let [user, setUser] = useState( state );
+  let [theUser, setTheUser] = useState( user );
   useEffect(() => {
-    console.log( user )
-    handleLogin( user )
-  }, [user]);
+    console.log( theUser );
+    handleLogin( theUser )
+  }, [theUser]);
   
   const login = () => {
     auth.login( email, password ).then( token => {
       const credentials = decode( token );
       if ( credentials ) {
-        console.log(credentials)
-        setUser( credentials );
+        let info = {
+          user_id: '',
+          api_key: '',
+          user_name: '',
+          email: '',
+          isLoggedIn: true
+        };
+        info['user_id'] = credentials.user_id;
+        info['api_key'] = credentials.api_key;
+        info['user_name'] = credentials.user_name;
+        info['email'] = credentials.email;
+        setTheUser( info );
       }
     } ).catch( err => {
       console.log( err );
@@ -71,10 +81,18 @@ export const LoginContainer = ( {state, handleLogin, handleLogout} ) => {
   const onChangePass = (e) => {
     setPassword(e.target.value)
   };
+  
+  const Data = () => {
+    console.log('state', user)
+    // if () {
+    //   return (<h1>{user.user_id} {user.api_key} {user.user_name} {user.email}</h1>)
+    // }
+    return <h1>Not logged in</h1>
+  }
 
   return(
     <Paper>
-      <h1>State: {state}</h1>
+      <Data />
       <FormControl>
         <TextField required={true} name={'email'} placeholder={'Email'} variant={'outlined'} onChange={(e) => onChangeEmail(e)} value={email}/>
         <TextField required={true} name={'password'} placeholder={'Password'} type="password" variant={'outlined'} onChange={(e) => onChangePass(e)} value={password}/>
