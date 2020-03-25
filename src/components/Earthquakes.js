@@ -159,10 +159,9 @@ export default class Earthquakes extends Component {
     };
     const dateRange = this.getDate();
     const { search_filter, item_types } = searchBody( geoConfig, dateRange );
-    console.log( search_filter, item_types );
     // this.useKey();
     items.search( { filter: search_filter, types: item_types} ).then( response => {
-      console.log( 'hey', response );
+      console.log( 'response', response );
     } );
   }
   
