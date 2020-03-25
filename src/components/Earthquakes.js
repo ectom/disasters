@@ -115,7 +115,13 @@ export default class Earthquakes extends Component {
   }
   
   getUSGS() {
-    fetch( `https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=5&limit=10`, {
+    let today  = new Date();
+    let year = today.getFullYear();
+    let month = today.getMonth() + 1;
+    let date = today.getDate() - 2;
+    // TODO for setting date range
+    console.log('today', year, month, date)
+    fetch( `https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=${year}-${month}-${date-7}&endtime=${year}-${month}-${date-4}&minmagnitude=5&limit=10`, {
       method: 'GET',
       mode: 'cors',
       cache: 'no-cache',
@@ -128,13 +134,14 @@ export default class Earthquakes extends Component {
     }).then((res) => {
       return res.json();
     }).then(res => {
-      console.log( res );
+      console.log( 'USGS', res );
       const quakes = res.features;
       let earthquakes = [];
       for ( let i = 0; i < quakes.length; i++ ) {
+        let milliseconds = new Date( quakes[i].properties.time )
         let earthquake = {          // TODO store image(s) and link to explorer
           id: i,
-          time: Date( quakes[i].properties.time ),
+          time: milliseconds.toDateString(),
           magnitude: quakes[i].properties.mag,
           title: quakes[i].properties.title,
           place: quakes[i].properties.place,
@@ -143,6 +150,7 @@ export default class Earthquakes extends Component {
           type: quakes[i].properties.earthquake
         };
         earthquakes.push( earthquake );
+        console.log('time', earthquake.time)
       }
       this.setState( { earthquakes: earthquakes }, () => {
         console.log( this.state );
