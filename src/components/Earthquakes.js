@@ -1,6 +1,10 @@
 import React, { Component } from 'react';
 import { Paper, Typography } from '@material-ui/core';
+import DateFnsUtils from '@date-io/date-fns';
+import { MuiPickersUtilsProvider, KeyboardDatePicker} from '@material-ui/pickers';
 import { searchBody } from '../actions/search';
+import CoordinateMap from './CoordinateMap';
+
 
 const { auth, items, filter } = require( '@planet/client/api' );
 
@@ -10,7 +14,9 @@ export default class Earthquakes extends Component {
     this.state = {
       item_id: undefined,
       item_url: undefined,
-      earthquakes: []
+      earthquakes: [],
+      dateFrom: new Date('2014-08-18T21:11:54'),
+      dateTo: new Date('2014-08-19T21:11:54')
     };
     this.key = process.env.REACT_APP_API_KEY;
     this.search4Band();
@@ -115,13 +121,14 @@ export default class Earthquakes extends Component {
   }
   
   getUSGS() {
-    let today  = new Date();
-    let year = today.getFullYear();
-    let month = today.getMonth() + 1;
-    let date = today.getDate() - 2;
-    // TODO for setting date range
+    let {year, month, date} = this.getDateTwoDaysAgo();
     console.log('today', year, month, date)
-    fetch( `https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=${year}-${month}-${date-7}&endtime=${year}-${month}-${date-4}&minmagnitude=5&limit=10`, {
+    const start = `${this.state.dateFrom.getFullYear()}-${this.state.dateFrom.getMonth()}-${this.state.dateFrom.getDate()}`;
+    const end = `${this.state.dateTo.getFullYear()}-${this.state.dateTo.getMonth()}-${this.state.dateTo.getDate()}`;
+    
+    console.log('ysrdfuvi', start);
+    fetch( `https://earthquake.usgs.gov/fdsnws/event/1/query?minmagnitude=5&format=geojson&limit=10&starttime=${start}&endtime=${end}`, {
+    // fetch( `https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=5&limit=10`, {
       method: 'GET',
       mode: 'cors',
       cache: 'no-cache',
@@ -173,11 +180,28 @@ export default class Earthquakes extends Component {
     } );
   }
   
+  getDateTwoDaysAgo(){
+    let today  = new Date();
+    let year = today.getFullYear();
+    let month = today.getMonth() + 1;
+    let date = today.getDate() - 2;
+    return {year, month, date};
+  }
+  
+  handleDateChange = date => {
+    let newDate = new Date(date);
+    newDate.setDate(newDate.getDate() + 1);
+    this.setState({dateFrom: date, dateTo: newDate}, () => {
+      this.getUSGS()
+    });
+  };
+  
   Earthquake = ( quake ) => {
-    // console.log( quake );
+    console.log( quake );
     return (
       <React.Fragment key={quake.id}>
       <Paper style={{ 'margin': '5%' }}>
+        {/*<CoordinateMap lat={quake.point[1]} long={quake.point[0]} zoom={13}/>*/}
         <Typography variant={'h5'}>{quake.title}</Typography>
         <Typography variant={'body1'}><strong>Magnitude:</strong> {quake.magnitude}</Typography>
         <Typography variant={'body1'}><strong>Place:</strong> {quake.place}</Typography>
@@ -191,13 +215,28 @@ export default class Earthquakes extends Component {
   render() {
     return (
       <>
-        <Paper>
-          <Typography>{this.state.item_id}</Typography>
-          <img src={this.state.item_url} alt=""/>
-        </Paper>
-        <Paper>
-          {this.state.earthquakes.map( quake => this.Earthquake( quake ) )}
-        </Paper>
+        <MuiPickersUtilsProvider utils={DateFnsUtils}>
+          <KeyboardDatePicker
+            margin="normal"
+            variant="inline"
+            id="date-picker-dialog"
+            label="From"
+            format="MM/dd/yyyy"
+            value={this.state.dateFrom}
+            onChange={this.handleDateChange}
+            KeyboardButtonProps={{
+              'aria-label': 'change date',
+            }}
+          />
+          <Paper>
+            <Typography>{this.state.item_id}</Typography>
+            <img src={this.state.item_url} alt=""/>
+          </Paper>
+          <Paper>
+            {/*<CoordinateMap lat={-20.4823} long={168.7607} zoom={13}/>*/}
+            {this.state.earthquakes.map( quake => this.Earthquake( quake ))}
+          </Paper>
+        </MuiPickersUtilsProvider>
       </>
     )
   }
