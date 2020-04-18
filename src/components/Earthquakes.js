@@ -3,7 +3,7 @@ import { Paper, Typography } from '@material-ui/core';
 import DateFnsUtils from '@date-io/date-fns';
 import { MuiPickersUtilsProvider, KeyboardDatePicker} from '@material-ui/pickers';
 import { searchBody } from '../actions/search';
-import CoordinateMap from './Minimap/CoordinateMap';
+import Minimap from './Minimap/Minimap';
 
 
 const { auth, items, filter } = require( '@planet/client/api' );
@@ -202,7 +202,7 @@ export default class Earthquakes extends Component {
     return (
       <React.Fragment key={quake.id}>
       <Paper style={{ 'margin': '5%' }}>
-        <CoordinateMap lat={quake.point[1]} long={quake.point[0]} zoom={7}/>
+        <Minimap lat={quake.point[1]} long={quake.point[0]} zoom={5}/>
         <Typography variant={'h5'}>{quake.title}</Typography>
         <Typography variant={'body1'}><strong>Magnitude:</strong> {quake.magnitude}</Typography>
         <Typography variant={'body1'}><strong>Place:</strong> {quake.place}</Typography>
