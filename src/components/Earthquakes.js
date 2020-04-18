@@ -3,7 +3,7 @@ import { Paper, Typography } from '@material-ui/core';
 import DateFnsUtils from '@date-io/date-fns';
 import { MuiPickersUtilsProvider, KeyboardDatePicker} from '@material-ui/pickers';
 import { searchBody } from '../actions/search';
-import CoordinateMap from './CoordinateMap';
+import CoordinateMap from './Minimap/CoordinateMap';
 
 
 const { auth, items, filter } = require( '@planet/client/api' );
@@ -145,6 +145,7 @@ export default class Earthquakes extends Component {
       const quakes = res.features;
       let earthquakes = [];
       for ( let i = 0; i < quakes.length; i++ ) {
+        console.log('coord', quakes[i].geometry.coordinates[0], quakes[i].geometry.coordinates[1]);
         let milliseconds = new Date( quakes[i].properties.time )
         let earthquake = {          // TODO store image(s) and link to explorer
           id: i,
@@ -152,7 +153,7 @@ export default class Earthquakes extends Component {
           magnitude: quakes[i].properties.mag,
           title: quakes[i].properties.title,
           place: quakes[i].properties.place,
-          point: [quakes[i].geometry.coordinates[0], quakes[i].geometry.coordinates[1]],
+          point: [quakes[i].geometry.coordinates[1], quakes[i].geometry.coordinates[0]],
           bbox: this.pointToBBOX( quakes[i].geometry.coordinates[0], quakes[i].geometry.coordinates[1] ),
           type: quakes[i].properties.earthquake
         };
@@ -201,12 +202,12 @@ export default class Earthquakes extends Component {
     return (
       <React.Fragment key={quake.id}>
       <Paper style={{ 'margin': '5%' }}>
-        <CoordinateMap lat={quake.point[1]} long={quake.point[0]} zoom={13}/>
+        <CoordinateMap lat={quake.point[1]} long={quake.point[0]} zoom={7}/>
         <Typography variant={'h5'}>{quake.title}</Typography>
         <Typography variant={'body1'}><strong>Magnitude:</strong> {quake.magnitude}</Typography>
         <Typography variant={'body1'}><strong>Place:</strong> {quake.place}</Typography>
         <Typography variant={'body1'}><strong>Time of earthquake:</strong> {quake.time}</Typography>
-        <Typography variant={'body1'}><strong>Coordinates of earthquake:</strong> {quake.point[0]}°W, {quake.point[1]}°N</Typography>
+        <Typography variant={'body1'}><strong>Coordinates of earthquake:</strong> {quake.point[0]}°N, {quake.point[1]}°W</Typography>
       </Paper>
       </React.Fragment>
     )

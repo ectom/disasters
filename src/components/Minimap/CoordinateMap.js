@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
-import { Map, Marker, Popup, TileLayer } from 'react-leaflet'
+import { Map, Marker, TileLayer } from 'react-leaflet';
+import L from 'leaflet';
 
 export default class CoordinateMap extends Component {
   constructor(props) {
@@ -9,6 +10,18 @@ export default class CoordinateMap extends Component {
       zoom: props.zoom
     };
   }
+  
+  iconDot = new L.Icon({
+    iconUrl: require('./marker.png'),
+    iconRetinaUrl: require('./marker.png'),
+    iconAnchor: null,
+    popupAnchor: null,
+    shadowUrl: null,
+    shadowSize: null,
+    shadowAnchor: null,
+    iconSize: new L.Point(25, 25),
+    className: 'dummy'
+  });
 
   render() {
     return (
@@ -19,19 +32,19 @@ export default class CoordinateMap extends Component {
         zoom={this.state.zoom}
         doubleClickZoom={false}
         closePopupOnClick={false}
-        dragging={false}
+        dragging={true}
         zoomSnap={false}
         zoomDelta={false}
+        zoomControl={false}
         trackResize={false}
         touchZoom={false}
-        scrollWheelZoom={false}>
+        scrollWheelZoom={false}
+        attributionControl={false}>
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          attribution="&copy; <a href=&quot;http://osm.org/copyright&quot;>OpenStreetMap</a> contributors"
+          // attribution="&copy; <a href=&quot;http://osm.org/copyright&quot;>OpenStreetMap</a> contributors"
         />
-        <Marker position={this.state.position}>
-          <Popup>A pretty CSS3 popup.<br />Easily customizable.</Popup>
-        </Marker>
+        <Marker icon={this.iconDot} position={this.state.position}/>
       </Map>
       </React.Fragment>
     );
