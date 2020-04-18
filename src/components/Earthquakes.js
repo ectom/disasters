@@ -201,7 +201,7 @@ export default class Earthquakes extends Component {
     return (
       <React.Fragment key={quake.id}>
       <Paper style={{ 'margin': '5%' }}>
-        {/*<CoordinateMap lat={quake.point[1]} long={quake.point[0]} zoom={13}/>*/}
+        <CoordinateMap lat={quake.point[1]} long={quake.point[0]} zoom={13}/>
         <Typography variant={'h5'}>{quake.title}</Typography>
         <Typography variant={'body1'}><strong>Magnitude:</strong> {quake.magnitude}</Typography>
         <Typography variant={'body1'}><strong>Place:</strong> {quake.place}</Typography>
