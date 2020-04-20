@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
-import { Paper, Typography } from '@material-ui/core';
+import { Paper, Typography, Grid } from '@material-ui/core';
 import DateFnsUtils from '@date-io/date-fns';
 import { MuiPickersUtilsProvider, KeyboardDatePicker} from '@material-ui/pickers';
 import { searchBody } from '../actions/search';
 import Minimap from './Minimap/Minimap';
-
 
 const { auth, items, filter } = require( '@planet/client/api' );
 
@@ -201,14 +200,16 @@ export default class Earthquakes extends Component {
     console.log( quake );
     return (
       <React.Fragment key={quake.id}>
-      <Paper style={{ 'margin': '5%' }}>
-        <Minimap lat={quake.point[1]} long={quake.point[0]} zoom={5}/>
-        <Typography variant={'h5'}>{quake.title}</Typography>
-        <Typography variant={'body1'}><strong>Magnitude:</strong> {quake.magnitude}</Typography>
-        <Typography variant={'body1'}><strong>Place:</strong> {quake.place}</Typography>
-        <Typography variant={'body1'}><strong>Time of earthquake:</strong> {quake.time}</Typography>
-        <Typography variant={'body1'}><strong>Coordinates of earthquake:</strong> {quake.point[0]}°N, {quake.point[1]}°W</Typography>
-      </Paper>
+        <Paper style={{ margin: '5%', overflow: 'hidden' }}>
+          <Minimap lat={quake.point[1]} long={quake.point[0]} zoom={3} style={{ width: '130px', height:'130px'}}/>
+          <div style={{display: 'inline-block'}}>
+            <Typography variant={'h5'}>{quake.title}</Typography>
+            <Typography variant={'body1'}><strong>Magnitude:</strong> {quake.magnitude}</Typography>
+            <Typography variant={'body1'}><strong>Place:</strong> {quake.place}</Typography>
+            <Typography variant={'body1'}><strong>Time of earthquake:</strong> {quake.time}</Typography>
+            <Typography variant={'body1'}><strong>Coordinates of earthquake:</strong> {quake.point[0]}°N, {quake.point[1]}°W</Typography>
+          </div>
+        </Paper>
       </React.Fragment>
     )
   };
