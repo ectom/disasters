@@ -27,7 +27,7 @@ export default class Minimap extends Component {
     return (
       <React.Fragment>
       <Map
-        style={{width: '130px', height:'130px', display: 'inline-block'}}
+        style={{width: '225px', height:'225px', display: 'inline-block'}}
         center={this.state.position}
         zoom={this.state.zoom}
         doubleClickZoom={false}

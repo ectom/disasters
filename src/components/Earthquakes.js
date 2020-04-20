@@ -200,9 +200,9 @@ export default class Earthquakes extends Component {
     console.log( quake );
     return (
       <React.Fragment key={quake.id}>
-        <Paper style={{ margin: '5%', overflow: 'hidden' }}>
-          <Minimap lat={quake.point[1]} long={quake.point[0]} zoom={3} style={{ width: '130px', height:'130px'}}/>
-          <div style={{display: 'inline-block'}}>
+        <Paper style={{ padding: '2%', paddingBottom: '-2%', margin: '5%', overflow: 'hidden' }}>
+          <Minimap lat={quake.point[1]} long={quake.point[0]} zoom={3}/>
+          <div style={{display: 'inline-block', marginLeft: '5%', verticalAlign: 'top'}}>
             <Typography variant={'h5'}>{quake.title}</Typography>
             <Typography variant={'body1'}><strong>Magnitude:</strong> {quake.magnitude}</Typography>
             <Typography variant={'body1'}><strong>Place:</strong> {quake.place}</Typography>
