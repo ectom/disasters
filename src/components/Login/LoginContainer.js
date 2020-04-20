@@ -89,7 +89,7 @@ export const LoginContainer = ( {user, handleLogin, handleLogout} ) => {
         <h4>Welcome {user.login.user_name}!</h4>
         <Button onClick={() => logout()}>Logout</Button>
         <h1>Earthquakes</h1>
-        <Earthquakes/>
+        {/*<Earthquakes/>*/}
         </>
       )
     }
@@ -102,6 +102,7 @@ export const LoginContainer = ( {user, handleLogin, handleLogout} ) => {
           <TextField required={true} name={'password'} placeholder={'Password'} type="password" variant={'outlined'} onChange={(e) => onChangePass(e)} value={password}/>
           <Button disabled={!validEmail && !validPassword} onClick={() => login()}>Login</Button>
         </FormControl>
+        <Earthquakes/>
       </Paper>
       </>
     )

@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
-import { Paper, Typography } from '@material-ui/core';
+import { Paper, Typography, Grid } from '@material-ui/core';
+import DateFnsUtils from '@date-io/date-fns';
+import { MuiPickersUtilsProvider, KeyboardDatePicker} from '@material-ui/pickers';
 import { searchBody } from '../actions/search';
+import Minimap from './Minimap/Minimap';
 
 const { auth, items, filter } = require( '@planet/client/api' );
 
@@ -10,7 +13,9 @@ export default class Earthquakes extends Component {
     this.state = {
       item_id: undefined,
       item_url: undefined,
-      earthquakes: []
+      earthquakes: [],
+      dateFrom: new Date('2014-08-18T21:11:54'),
+      dateTo: new Date('2014-08-19T21:11:54')
     };
     this.key = process.env.REACT_APP_API_KEY;
     this.search4Band();
@@ -115,7 +120,14 @@ export default class Earthquakes extends Component {
   }
   
   getUSGS() {
-    fetch( `https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=5&limit=10`, {
+    let {year, month, date} = this.getDateTwoDaysAgo();
+    console.log('today', year, month, date)
+    const start = `${this.state.dateFrom.getFullYear()}-${this.state.dateFrom.getMonth()}-${this.state.dateFrom.getDate()}`;
+    const end = `${this.state.dateTo.getFullYear()}-${this.state.dateTo.getMonth()}-${this.state.dateTo.getDate()}`;
+    
+    console.log('ysrdfuvi', start);
+    fetch( `https://earthquake.usgs.gov/fdsnws/event/1/query?minmagnitude=5&format=geojson&limit=10&starttime=${start}&endtime=${end}`, {
+    // fetch( `https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=5&limit=10`, {
       method: 'GET',
       mode: 'cors',
       cache: 'no-cache',
@@ -128,21 +140,24 @@ export default class Earthquakes extends Component {
     }).then((res) => {
       return res.json();
     }).then(res => {
-      console.log( res );
+      console.log( 'USGS', res );
       const quakes = res.features;
       let earthquakes = [];
       for ( let i = 0; i < quakes.length; i++ ) {
+        console.log('coord', quakes[i].geometry.coordinates[0], quakes[i].geometry.coordinates[1]);
+        let milliseconds = new Date( quakes[i].properties.time )
         let earthquake = {          // TODO store image(s) and link to explorer
           id: i,
-          time: Date( quakes[i].properties.time ),
+          time: milliseconds.toDateString(),
           magnitude: quakes[i].properties.mag,
           title: quakes[i].properties.title,
           place: quakes[i].properties.place,
-          point: [quakes[i].geometry.coordinates[0], quakes[i].geometry.coordinates[1]],
+          point: [quakes[i].geometry.coordinates[1], quakes[i].geometry.coordinates[0]],
           bbox: this.pointToBBOX( quakes[i].geometry.coordinates[0], quakes[i].geometry.coordinates[1] ),
           type: quakes[i].properties.earthquake
         };
         earthquakes.push( earthquake );
+        console.log('time', earthquake.time)
       }
       this.setState( { earthquakes: earthquakes }, () => {
         console.log( this.state );
@@ -159,24 +174,42 @@ export default class Earthquakes extends Component {
     };
     const dateRange = this.getDate();
     const { search_filter, item_types } = searchBody( geoConfig, dateRange );
-    console.log( search_filter, item_types );
     // this.useKey();
     items.search( { filter: search_filter, types: item_types} ).then( response => {
-      console.log( 'hey', response );
+      console.log( 'response', response );
     } );
   }
   
+  getDateTwoDaysAgo(){
+    let today  = new Date();
+    let year = today.getFullYear();
+    let month = today.getMonth() + 1;
+    let date = today.getDate() - 2;
+    return {year, month, date};
+  }
+  
+  handleDateChange = date => {
+    let newDate = new Date(date);
+    newDate.setDate(newDate.getDate() + 1);
+    this.setState({dateFrom: date, dateTo: newDate}, () => {
+      this.getUSGS()
+    });
+  };
+  
   Earthquake = ( quake ) => {
-    // console.log( quake );
+    console.log( quake );
     return (
       <React.Fragment key={quake.id}>
-      <Paper style={{ 'margin': '5%' }}>
-        <Typography variant={'h5'}>{quake.title}</Typography>
-        <Typography variant={'body1'}><strong>Magnitude:</strong> {quake.magnitude}</Typography>
-        <Typography variant={'body1'}><strong>Place:</strong> {quake.place}</Typography>
-        <Typography variant={'body1'}><strong>Time of earthquake:</strong> {quake.time}</Typography>
-        <Typography variant={'body1'}><strong>Coordinates of earthquake:</strong> {quake.point[0]}°W, {quake.point[1]}°N</Typography>
-      </Paper>
+        <Paper style={{ padding: '2%', paddingBottom: '-2%', margin: '5%', overflow: 'hidden' }}>
+          <Minimap lat={quake.point[1]} long={quake.point[0]} zoom={3}/>
+          <div style={{display: 'inline-block', marginLeft: '5%', verticalAlign: 'top'}}>
+            <Typography variant={'h5'}>{quake.title}</Typography>
+            <Typography variant={'body1'}><strong>Magnitude:</strong> {quake.magnitude}</Typography>
+            <Typography variant={'body1'}><strong>Place:</strong> {quake.place}</Typography>
+            <Typography variant={'body1'}><strong>Time of earthquake:</strong> {quake.time}</Typography>
+            <Typography variant={'body1'}><strong>Coordinates of earthquake:</strong> {quake.point[0]}°N, {quake.point[1]}°E</Typography>
+          </div>
+        </Paper>
       </React.Fragment>
     )
   };
@@ -184,13 +217,28 @@ export default class Earthquakes extends Component {
   render() {
     return (
       <>
-        <Paper>
-          <Typography>{this.state.item_id}</Typography>
-          <img src={this.state.item_url} alt=""/>
-        </Paper>
-        <Paper>
-          {this.state.earthquakes.map( quake => this.Earthquake( quake ) )}
-        </Paper>
+        <MuiPickersUtilsProvider utils={DateFnsUtils}>
+          <KeyboardDatePicker
+            margin="normal"
+            variant="inline"
+            id="date-picker-dialog"
+            label="From"
+            format="MM/dd/yyyy"
+            value={this.state.dateFrom}
+            onChange={this.handleDateChange}
+            KeyboardButtonProps={{
+              'aria-label': 'change date',
+            }}
+          />
+          <Paper>
+            <Typography>{this.state.item_id}</Typography>
+            <img src={this.state.item_url} alt=""/>
+          </Paper>
+          <Paper>
+            {/*<CoordinateMap lat={-20.4823} long={168.7607} zoom={13}/>*/}
+            {this.state.earthquakes.map( quake => this.Earthquake( quake ))}
+          </Paper>
+        </MuiPickersUtilsProvider>
       </>
     )
   }
