@@ -207,7 +207,7 @@ export default class Earthquakes extends Component {
             <Typography variant={'body1'}><strong>Magnitude:</strong> {quake.magnitude}</Typography>
             <Typography variant={'body1'}><strong>Place:</strong> {quake.place}</Typography>
             <Typography variant={'body1'}><strong>Time of earthquake:</strong> {quake.time}</Typography>
-            <Typography variant={'body1'}><strong>Coordinates of earthquake:</strong> {quake.point[0]}°N, {quake.point[1]}°W</Typography>
+            <Typography variant={'body1'}><strong>Coordinates of earthquake:</strong> {quake.point[0]}°N, {quake.point[1]}°E</Typography>
           </div>
         </Paper>
       </React.Fragment>
