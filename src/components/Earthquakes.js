@@ -4,6 +4,7 @@ import DateFnsUtils from '@date-io/date-fns';
 import { MuiPickersUtilsProvider, KeyboardDatePicker} from '@material-ui/pickers';
 import { searchBody } from '../actions/search';
 import Minimap from './Minimap/Minimap';
+import isSea from '../actions/isSea';
 
 const { auth, items, filter } = require( '@planet/client/api' );
 
@@ -14,8 +15,8 @@ export default class Earthquakes extends Component {
       item_id: undefined,
       item_url: undefined,
       earthquakes: [],
-      dateFrom: new Date('2014-08-18T21:11:54'),
-      dateTo: new Date('2014-08-19T21:11:54')
+      dateFrom: new Date('2015-08-18T21:11:54'),
+      dateTo: new Date('2015-08-19T21:11:54')
     };
     this.key = process.env.REACT_APP_API_KEY;
     this.search4Band();
@@ -198,6 +199,7 @@ export default class Earthquakes extends Component {
   
   Earthquake = ( quake ) => {
     console.log( quake );
+    const locationType = isSea(quake.point[1], quake.point[0]) ? 'Sea': 'Land';
     return (
       <React.Fragment key={quake.id}>
         <Paper style={{ padding: '2%', paddingBottom: '-2%', margin: '5%', overflow: 'hidden' }}>
@@ -208,6 +210,7 @@ export default class Earthquakes extends Component {
             <Typography variant={'body1'}><strong>Place:</strong> {quake.place}</Typography>
             <Typography variant={'body1'}><strong>Time of earthquake:</strong> {quake.time}</Typography>
             <Typography variant={'body1'}><strong>Coordinates of earthquake:</strong> {quake.point[0]}°N, {quake.point[1]}°E</Typography>
+            <Typography variant={'body1'}><strong>Land or Sea:</strong> {locationType}</Typography>
           </div>
         </Paper>
       </React.Fragment>
