@@ -1,13 +1,27 @@
 import React, { useEffect, useState } from 'react';
-import { Paper, TextField, Button, FormControl } from '@material-ui/core';
+import { Button, FormControl, Paper, TextField } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
 import decode from 'jwt-decode';
-import Earthquakes from '../Earthquakes';
 
 const auth = require( '@planet/client/api/auth' );
 // const errors = require( '@planet/client/api/errors' );
 
+const useStyles = makeStyles( theme => ( {
+  paper: {
+    position: 'absolute',
+    width: '35%',
+    backgroundColor: theme.palette.background.paper,
+    border: '2px solid #000',
+    boxShadow: theme.shadows[5],
+    padding: theme.spacing( 2, 4, 3 ),
+    marginLeft: '30%',
+    marginRight: '35%',
+    marginTop: '10%'
+  },
+} ) );
 
-export const LoginContainer = ( {user, handleLogin, handleLogout} ) => {
+export const LoginContainer = ( {user, handleOpen, handleLogin, handleLogout} ) => {
+  const classes = useStyles();
   
   let [email, setEmail] = useState('');
   useEffect(() => {
@@ -43,6 +57,7 @@ export const LoginContainer = ( {user, handleLogin, handleLogout} ) => {
   }, [theUser]);
   
   const login = () => {
+    handleOpen();
     auth.login( email, password ).then( token => {
       const credentials = decode( token );
       if ( credentials ) {
@@ -94,17 +109,16 @@ export const LoginContainer = ( {user, handleLogin, handleLogout} ) => {
       )
     }
     return (
-      <>
-      <h2>Log In</h2>
-      <Paper>
+      <Paper className={classes.paper}>
+        <h2>Log In to Planet Labs</h2>
         <FormControl>
-          <TextField required={true} name={'email'} placeholder={'Email'} variant={'outlined'} onChange={(e) => onChangeEmail(e)} value={email}/>
-          <TextField required={true} name={'password'} placeholder={'Password'} type="password" variant={'outlined'} onChange={(e) => onChangePass(e)} value={password}/>
+          <TextField required={true} name={'email'} placeholder={'Email'} variant={'outlined'}
+                     onChange={( e ) => onChangeEmail( e )} value={email}/>
+          <TextField required={true} name={'password'} placeholder={'Password'} type="password" variant={'outlined'}
+                     onChange={( e ) => onChangePass( e )} value={password}/>
           <Button disabled={!validEmail && !validPassword} onClick={() => login()}>Login</Button>
         </FormControl>
-        <Earthquakes/>
       </Paper>
-      </>
     )
   };
 
