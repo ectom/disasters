@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
-import { Paper, Typography, Grid } from '@material-ui/core';
+import { Paper, Typography, InputLabel, MenuItem, FormControl, Select } from '@material-ui/core';
 import DateFnsUtils from '@date-io/date-fns';
 import { MuiPickersUtilsProvider, KeyboardDatePicker} from '@material-ui/pickers';
 import { searchBody } from '../actions/search';
 import Minimap from './Minimap/Minimap';
 import isSea from '../actions/isSea';
+import { makeStyles } from '@material-ui/core/styles';
 
 const { auth, items, filter } = require( '@planet/client/api' );
 
@@ -16,7 +17,8 @@ export default class Earthquakes extends Component {
       item_url: undefined,
       earthquakes: [],
       dateFrom: new Date('2015-08-18T21:11:54'),
-      dateTo: new Date('2015-08-19T21:11:54')
+      dateTo: new Date('2015-08-19T21:11:54'),
+      magnitude: 5
     };
     this.key = process.env.REACT_APP_API_KEY;
     this.search4Band();
@@ -122,12 +124,12 @@ export default class Earthquakes extends Component {
   
   getUSGS() {
     let {year, month, date} = this.getDateTwoDaysAgo();
-    console.log('today', year, month, date)
+    console.log('today', year, month, date);
     const start = `${this.state.dateFrom.getFullYear()}-${this.state.dateFrom.getMonth()}-${this.state.dateFrom.getDate()}`;
     const end = `${this.state.dateTo.getFullYear()}-${this.state.dateTo.getMonth()}-${this.state.dateTo.getDate()}`;
     
     console.log('ysrdfuvi', start);
-    fetch( `https://earthquake.usgs.gov/fdsnws/event/1/query?minmagnitude=5&format=geojson&limit=10&starttime=${start}&endtime=${end}`, {
+    fetch( `https://earthquake.usgs.gov/fdsnws/event/1/query?minmagnitude=${this.state.magnitude}&format=geojson&limit=10&starttime=${start}&endtime=${end}`, {
     // fetch( `https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=5&limit=10`, {
       method: 'GET',
       mode: 'cors',
@@ -197,13 +199,19 @@ export default class Earthquakes extends Component {
     });
   };
   
+  handleMagnitudeChange = (event) => {
+    this.setState({magnitude: event.target.value}, () => {
+      this.getUSGS()
+    });
+  }
+  
   Earthquake = ( quake ) => {
     console.log( quake );
     const locationType = isSea(quake.point[1], quake.point[0]) ? 'Sea': 'Land';
     return (
       <React.Fragment key={quake.id}>
         <Paper style={{ padding: '2%', paddingBottom: '-2%', margin: '5%', overflow: 'hidden' }}>
-          <Minimap lat={quake.point[1]} long={quake.point[0]} zoom={3}/>
+          <Minimap key={`${quake.point[1]}/${quake.point[0]}`} lat={quake.point[1]} long={quake.point[0]} zoom={3}/>
           <div style={{display: 'inline-block', marginLeft: '5%', verticalAlign: 'top'}}>
             <Typography variant={'h5'}>{quake.title}</Typography>
             <Typography variant={'body1'}><strong>Magnitude:</strong> {quake.magnitude}</Typography>
@@ -218,21 +226,49 @@ export default class Earthquakes extends Component {
   };
   
   render() {
+  
     return (
       <>
         <MuiPickersUtilsProvider utils={DateFnsUtils}>
-          <KeyboardDatePicker
-            margin="normal"
-            variant="inline"
-            id="date-picker-dialog"
-            label="From"
-            format="MM/dd/yyyy"
-            value={this.state.dateFrom}
-            onChange={this.handleDateChange}
-            KeyboardButtonProps={{
-              'aria-label': 'change date',
+          <div
+            style={{
+              margin: '5% 5% 0% 5%'
             }}
-          />
+          >
+            <KeyboardDatePicker
+              margin="normal"
+              variant="inline"
+              id="date-picker-dialog"
+              label="Select a Date"
+              format="MM/dd/yyyy"
+              value={this.state.dateFrom}
+              onChange={this.handleDateChange}
+              KeyboardButtonProps={{
+                'aria-label': 'change date',
+              }}
+            />
+            <FormControl style={{margin: '1.3% 1.3% 1.3% 1.3%'}}>
+              <InputLabel shrink id="demo-simple-select-placeholder-label-label">
+                Magnitude
+              </InputLabel>
+              <Select
+                labelId="demo-simple-select-placeholder-label-label"
+                id="demo-simple-select-placeholder-label"
+                value={this.state.magnitude}
+                onChange={this.handleMagnitudeChange}
+                displayEmpty
+              >
+                <MenuItem value={1}>1</MenuItem>
+                <MenuItem value={2}>2</MenuItem>
+                <MenuItem value={3}>3</MenuItem>
+                <MenuItem value={4}>4</MenuItem>
+                <MenuItem value={5}>5</MenuItem>
+                <MenuItem value={6}>6</MenuItem>
+                <MenuItem value={7}>7</MenuItem>
+              </Select>
+            </FormControl>
+            
+          </div>
           <Paper>
             <Typography>{this.state.item_id}</Typography>
             <img src={this.state.item_url} alt=""/>

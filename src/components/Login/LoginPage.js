@@ -1,9 +1,10 @@
 import { connect } from 'react-redux';
 import { LoginContainer } from './LoginContainer';
 
-const mapStateToProps = state => {
+const mapStateToProps = (state, ownProps) => {
   return {
-    user: state
+    user: state,
+    handleOpen: ownProps.handleOpen
   };
 };
 

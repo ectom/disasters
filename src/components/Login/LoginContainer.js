@@ -20,7 +20,7 @@ const useStyles = makeStyles( theme => ( {
   },
 } ) );
 
-export const LoginContainer = ( {user, handleLogin, handleLogout} ) => {
+export const LoginContainer = ( {user, handleOpen, handleLogin, handleLogout} ) => {
   const classes = useStyles();
   
   let [email, setEmail] = useState('');
@@ -57,6 +57,7 @@ export const LoginContainer = ( {user, handleLogin, handleLogout} ) => {
   }, [theUser]);
   
   const login = () => {
+    handleOpen();
     auth.login( email, password ).then( token => {
       const credentials = decode( token );
       if ( credentials ) {

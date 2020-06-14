@@ -2,6 +2,10 @@ import React, { useState } from 'react';
 import { AppBar, Button, Modal, Toolbar, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { LoginPage } from '../Login/LoginPage';
+import { store } from '../../store';
+
+const state = store.getState();
+console.log('user_id', state.login.user_id);
 
 const useStyles = makeStyles( ( theme ) => ( {
   title: {
@@ -20,6 +24,16 @@ const Navbar = () => {
     setOpen( !open );
   };
   
+  const LoggedIn = () => {
+    console.log(state);
+    if(state.login.isLoggedIn){
+      return <Typography>{state.user.user_name}</Typography>
+    }
+    else{
+      return <Button color="inherit" onClick={handleOpen}>Login</Button>
+    }
+  };
+  
   return (
     <>
       <AppBar>
@@ -27,7 +41,7 @@ const Navbar = () => {
           <Typography variant="h6" className={classes.title}>
             Disasters
           </Typography>
-          <Button color="inherit" onClick={handleOpen}>Login</Button>
+          <LoggedIn />
         </Toolbar>
         <Modal
           aria-labelledby="login-modal-title"
@@ -36,7 +50,7 @@ const Navbar = () => {
           onClose={handleOpen}
           className={classes.center}
         >
-          <LoginPage/>
+          <LoginPage handleOpen={handleOpen}/>
         </Modal>
       </AppBar>
     </>
