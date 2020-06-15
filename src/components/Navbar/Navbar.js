@@ -4,8 +4,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { LoginPage } from '../Login/LoginPage';
 import { store } from '../../store';
 
-const state = store.getState();
-console.log('user_id', state.login.user_id);
+console.log('user_id', store.getState().user_id);
 
 const useStyles = makeStyles( ( theme ) => ( {
   title: {
@@ -25,9 +24,9 @@ const Navbar = () => {
   };
   
   const LoggedIn = () => {
-    console.log(state);
-    if(state.login.isLoggedIn){
-      return <Typography>{state.user.user_name}</Typography>
+    console.log(store.getState().isLoggedIn);
+    if(store.getState().isLoggedIn){
+      return <Typography>{store.getState().user_name}</Typography>
     }
     else{
       return <Button color="inherit" onClick={handleOpen}>Login</Button>

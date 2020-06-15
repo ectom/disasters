@@ -7,6 +7,7 @@ const initialState = {
 }
 
 export const loginReducer = function (state = initialState, action) {
+  console.log('action ', action);
   switch (action.type) {
     case 'LOGIN':
       state = action.payload;

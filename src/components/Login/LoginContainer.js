@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Button, FormControl, Paper, TextField } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import decode from 'jwt-decode';
+import { store } from '../../store';
 
 const auth = require( '@planet/client/api/auth' );
 // const errors = require( '@planet/client/api/errors' );
@@ -51,28 +52,31 @@ export const LoginContainer = ( {user, handleOpen, handleLogin, handleLogout} ) 
   let [validEmail, setValidEmail] = useState( false );
   let [validPassword, setValidPassword] = useState( false );
   
-  let [theUser, setTheUser] = useState( user );
+  let [theUser, setTheUser] = useState( store.getState() );
   useEffect(() => {
-    handleLogin( theUser )
+    // let mounted = true;
+    // if(mounted){
+      // handleLogin( theUser );
+    console.log(theUser);
+    // }
+    // return () => mounted = false;
   }, [theUser]);
   
-  const login = () => {
+  const login = () => {             // TODO this is being called when the modal is opened in the navbar, not when the credentials are entered and logged i\
     handleOpen();
     auth.login( email, password ).then( token => {
       const credentials = decode( token );
       if ( credentials ) {
         let info = {
-          user_id: '',
-          api_key: '',
-          user_name: '',
-          email: '',
+          user_id: credentials.user_id,
+          api_key: credentials.api_key,
+          user_name: credentials.user_name,
+          email: credentials.email,
           isLoggedIn: true
         };
-        info['user_id'] = credentials.user_id;
-        info['api_key'] = credentials.api_key;
-        info['user_name'] = credentials.user_name;
-        info['email'] = credentials.email;
-        setTheUser( info );
+        handleLogin(info, () => {
+          setTheUser( store.getState );
+        });
       }
     } ).catch( err => {
       console.log( err );
@@ -98,13 +102,12 @@ export const LoginContainer = ( {user, handleOpen, handleLogin, handleLogout} ) 
   };
   
   const Login = () => {
-    if (user.login.isLoggedIn) {
+    if (user.isLoggedIn) {
       return (
         <>
-        <h4>Welcome {user.login.user_name}!</h4>
+        <h4>Welcome {user.user_name}!</h4>
         <Button onClick={() => logout()}>Logout</Button>
         <h1>Earthquakes</h1>
-        {/*<Earthquakes/>*/}
         </>
       )
     }
@@ -113,9 +116,9 @@ export const LoginContainer = ( {user, handleOpen, handleLogin, handleLogout} ) 
         <h2>Log In to Planet Labs</h2>
         <FormControl>
           <TextField required={true} name={'email'} placeholder={'Email'} variant={'outlined'}
-                     onChange={( e ) => onChangeEmail( e )} value={email}/>
+                     onChange={( e ) => {onChangeEmail( e )}} value={email}/>
           <TextField required={true} name={'password'} placeholder={'Password'} type="password" variant={'outlined'}
-                     onChange={( e ) => onChangePass( e )} value={password}/>
+                     onChange={( e ) => {onChangePass( e )}} value={password}/>
           <Button disabled={!validEmail && !validPassword} onClick={() => login()}>Login</Button>
         </FormControl>
       </Paper>
