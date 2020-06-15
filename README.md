@@ -1,13 +1,24 @@
-# Planet Disasters
+# Disasters
 
-Welcome to the Planet Disaster web app. This will eventually show recent disasters around the world, using Planet Data.
+Welcome to the Disaster web app. This currently shows earthquakes around the world, filtered by date and magnitude, 
+with relevant data. Will improve to show more types of disasters
+
 
 ### Steps to run in development
 `1) Clone this repository`\
 `2) npm install`\
 `3) npm run start`
 
-### Configuration
-A login page is not setup yet. Create a .env file in the root of the project and put
-`REACT_APP_API_KEY={api-kay}` in it before running.
+### Technologies
+- React
+- Redux
+- Material UI
+- USGS API
+- Planet Labs API
+- React Leaflet
 
+### Known Issues
+- Login dialog allows user to only download one character at a time, then loses focus.
+- Redux store clears on page refresh
+- Login button doesn't rerender when user is logged in
+- Planet search query not setup properly
