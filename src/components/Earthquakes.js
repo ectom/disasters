@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import { Paper, Typography, InputLabel, MenuItem, FormControl, Select } from '@material-ui/core';
+import { Paper, Typography, InputLabel, MenuItem, FormControl, Select, Button } from '@material-ui/core';
 import DateFnsUtils from '@date-io/date-fns';
 import { MuiPickersUtilsProvider, KeyboardDatePicker } from '@material-ui/pickers';
 import { searchBody } from '../actions/search';
 import Minimap from './Minimap/Minimap';
 import isSea from '../actions/isSea';
-import { makeStyles } from '@material-ui/core/styles';
+import { store } from '../store';
 
 const { auth, items, filter } = require( '@planet/client/api' );
 
@@ -20,7 +20,7 @@ export default class Earthquakes extends Component {
       earthquakes: [],
       dateFrom: new Date( `${this.d.getFullYear()}-${this.twoDigits(this.d.getMonth() + 1)}-${this.twoDigits(this.d.getDate()-1)}T${this.twoDigits(this.d.getHours())}:${this.twoDigits(this.d.getMinutes())}:${this.twoDigits(this.d.getSeconds())}` ),
       dateTo: new Date( `${this.d.getFullYear()}-${this.twoDigits(this.d.getMonth() + 1)}-${this.twoDigits(this.d.getDate())}T${this.twoDigits(this.d.getHours())}:${this.twoDigits(this.d.getMinutes())}:${this.twoDigits(this.d.getSeconds())}` ),
-      magnitude: 5
+      magnitude: 5,
     };
     this.key = process.env.REACT_APP_API_KEY;
     this.search4Band();
@@ -32,12 +32,7 @@ export default class Earthquakes extends Component {
   }
   
   useKey() {
-    const key = process.env.REACT_APP_API_KEY;
-    auth.setKey( key );
-  }
-  
-  getKey() {
-    return process.env.REACT_APP_API_KEY;
+    auth.setKey( store.getState().api_key );
   }
   
   search4Band() {
@@ -181,17 +176,19 @@ export default class Earthquakes extends Component {
   getExplorerSites() {
     // constructing search body
     if(this.state.earthquakes.length > 0){
-      console.log('ewhbvgheirvbwj3r2v', this.state.earthquakes)
       const geoConfig = {
         "type": "Polygon",
         "coordinates": this.pointToBBOX( this.state.earthquakes[0].point[0], this.state.earthquakes[0].point[1] )
       };
       const dateRange = this.getDate();
       const { search_filter, item_types } = searchBody( geoConfig, dateRange );
-      // this.useKey();
-      items.search( { filter: search_filter, types: item_types } ).then( response => {
-        console.log( 'response', response );
-      } );
+  
+      if(store.getState().isLoggedIn) {
+        this.useKey();
+        items.search( { filter: search_filter, types: item_types } ).then( response => {
+          console.log( 'response', response );
+        } );
+      }
     }
   }
   
@@ -284,6 +281,7 @@ export default class Earthquakes extends Component {
                 <MenuItem value={6}>6</MenuItem>
                 <MenuItem value={7}>7</MenuItem>
               </Select>
+              <Button onClick={() => console.log('user', store.getState())}>State</Button>
             </FormControl>
           </div>
           {/*<Paper>*/}

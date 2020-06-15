@@ -11,7 +11,7 @@ const mapStateToProps = (state, ownProps) => {
 const mapDispatchToProps = dispatch => {
   return {
     handleLogin: ( user ) => dispatch( { type: 'LOGIN', payload: user } ),
-    handleLogout: () => dispatch( { type: 'LOGOUT' } )
+    handleLogout: () => dispatch( { type: 'LOGOUT' } ),
   }
 };
 
