@@ -16,8 +16,11 @@ with relevant data. Will improve to show more types of disasters
 - USGS API
 - Planet Labs API
 - React Leaflet
+- Github Pages
+- Git / Github
 
 ### Known Issues
+- Date IO must use version 1.x in order to work with Material UI Pickers
 - Login dialog allows user to only download one character at a time, then loses focus.
 - Redux store clears on page refresh
 - Login button doesn't rerender when user is logged in
