@@ -245,9 +245,10 @@ export default class Earthquakes extends Component {
     return (
       <>
         <MuiPickersUtilsProvider utils={DateFnsUtils}>
+          <div style={{height: '64px'}} />
           <div
             style={{
-              margin: '5% 5% 0% 5%'
+              margin: '0% 5% 0% 5%'
             }}
           >
             <KeyboardDatePicker
@@ -262,7 +263,7 @@ export default class Earthquakes extends Component {
                 'aria-label': 'change date',
               }}
             />
-            <FormControl style={{ margin: '1.3% 1.3% 1.3% 1.3%' }}>
+            <FormControl style={{ margin: '15px' }}>
               <InputLabel shrink id="demo-simple-select-placeholder-label-label">
                 Magnitude
               </InputLabel>
@@ -279,9 +280,9 @@ export default class Earthquakes extends Component {
                 <MenuItem value={4}>4</MenuItem>
                 <MenuItem value={5}>5</MenuItem>
                 <MenuItem value={6}>6</MenuItem>
-                <MenuItem value={7}>7</MenuItem>
+                <MenuItem value={7}>7+</MenuItem>
               </Select>
-              <Button onClick={() => console.log('user', store.getState())}>State</Button>
+              {/* <Button onClick={() => console.log('user', store.getState())}>State</Button> */}
             </FormControl>
           </div>
           {/*<Paper>*/}

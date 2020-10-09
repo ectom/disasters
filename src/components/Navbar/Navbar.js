@@ -40,9 +40,9 @@ const Navbar = () => {
           <Typography variant="h6" className={classes.title}>
             Disasters
           </Typography>
-          <LoggedIn />
+          {/* <LoggedIn /> */}
         </Toolbar>
-        <Modal
+        {/* <Modal
           aria-labelledby="login-modal-title"
           aria-describedby="login-modal-description"
           open={open}
@@ -50,7 +50,7 @@ const Navbar = () => {
           className={classes.center}
         >
           <LoginPage handleOpen={handleOpen}/>
-        </Modal>
+        </Modal> */}
       </AppBar>
     </>
   )
