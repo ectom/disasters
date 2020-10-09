@@ -219,7 +219,7 @@ export default class Earthquakes extends Component {
     const locationType = isSea( quake.point[1], quake.point[0] ) ? 'Sea' : 'Land';
     return (
       <React.Fragment key={quake.id}>
-        <Paper style={{ padding: '2%', paddingBottom: '-2%', margin: '5%', overflow: 'hidden' }}>
+        <Paper style={{ padding: '2%', paddingBottom: '-2%', margin: '5%', overflow: 'hidden', minWidth: '750px' }}>
           <Minimap key={`${quake.point[1]}/${quake.point[0]}`} lat={quake.point[1]} long={quake.point[0]} zoom={3}/>
           <div style={{ display: 'inline-block', marginLeft: '5%', verticalAlign: 'top' }}>
             <Typography variant={'h5'}>{quake.title}</Typography>
